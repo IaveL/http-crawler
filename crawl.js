@@ -2,9 +2,24 @@ const { JSDOM } = require("jsdom");
 
 async function crawlPage(currentURL) {
   console.log(`currently crawling: ${currentURL}`);
-
   try {
     const response = await fetch(currentURL);
+
+    if (response.status > 399) {
+      console.log(
+        `error in fetch with the status code ${response.status} on page ${currentURL}`
+      );
+      return;
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType.includes("text/html")) {
+      console.log(
+        `not a html response, content type of ${contentType}, on page: ${currentURL}`
+      );
+      return;
+    }
+
     console.log(await response.text());
   } catch (e) {
     console.log(`error in fetch ${e.message} on page ${currentURL}`);
